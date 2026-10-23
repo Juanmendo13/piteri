@@ -6,6 +6,8 @@ dist
 .env*
 _tmp
 
-# Supabase keys for the PDA (never commit)
+# Local secrets / private lists (never commit)
 .env.local
+*.local.js
+waiters.local.js
 !.env.example

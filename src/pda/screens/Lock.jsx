@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { PIN_LENGTH, findWaiterByPin, saveActiveWaiter } from "../waiters.js";
 
-// ⚠️ The PINs (see waiters.js) only LOCK THE SCREEN and tell the app who is using the phone.
+// ⚠️ The PINs (PUBLIC_WAITERS_JSON) only LOCK THE SCREEN and tell the app who is using the phone.
 // They are NOT security: they ship in the public JS and anyone can read them.
 // The real protection of the data is the RLS policies in supabase/policies.sql.
 

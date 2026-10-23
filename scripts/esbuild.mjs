@@ -23,6 +23,7 @@ const shared = {
   define: {
     "process.env.PUBLIC_SUPABASE_URL": JSON.stringify(publicEnv("PUBLIC_SUPABASE_URL")),
     "process.env.PUBLIC_SUPABASE_ANON_KEY": JSON.stringify(publicEnv("PUBLIC_SUPABASE_ANON_KEY")),
+    "process.env.PUBLIC_WAITERS_JSON": JSON.stringify(publicEnv("PUBLIC_WAITERS_JSON")),
   },
   // Two independent bundles: public site (main) and waiter PDA (pda).
   entryPoints: { main: "src/main.jsx", pda: "src/pda/main.jsx" },

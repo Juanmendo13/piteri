@@ -11,10 +11,11 @@ Mientras no configures Supabase, `/sala/` funciona en **modalidad local** (datos
    ```
    PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
    PUBLIC_SUPABASE_ANON_KEY=eyJ...
+   PUBLIC_WAITERS_JSON=[{"id":"marco","pin":"XXXX","name":"Marco","zones":["sala"]}]
    ```
 
-   Reinicia `npm run dev` (las claves se inyectan al compilar).
-6. En Vercel: **Project → Settings → Environment Variables**, añade `PUBLIC_SUPABASE_URL` y `PUBLIC_SUPABASE_ANON_KEY` (Production y Preview) y vuelve a desplegar.
+   Reinicia `npm run dev` (las claves se inyectan al compilar). Los PIN reales van solo en `.env.local` / Vercel, nunca en git.
+6. En Vercel: **Project → Settings → Environment Variables**, añade `PUBLIC_SUPABASE_URL`, `PUBLIC_SUPABASE_ANON_KEY` y `PUBLIC_WAITERS_JSON` (Production y Preview) y vuelve a desplegar.
 
 ## Migración (camareros + aviso «pronto per ritiro»)
 
@@ -25,7 +26,7 @@ Si ya habías ejecutado una versión anterior de `schema.sql`, hay que añadir l
 
 Si instalas desde cero, basta con `schema.sql` y `policies.sql` como en los pasos 2 y 3. Mientras la base no esté migrada, la comandera sigue funcionando (reintenta el envío sin camarero), pero el botón «Pronto per ritiro» mostrará «Database non aggiornato».
 
-Los PIN de los camareros están en `src/pda/waiters.js`: solo identifican quién usa el móvil, no son seguridad.
+Los PIN de los camareros van en `PUBLIC_WAITERS_JSON` (`.env.local` / Vercel), no en el código: solo identifican quién usa el móvil, no son seguridad.
 
 ## Migración 002 (cuenta, admin de carta, informes)
 

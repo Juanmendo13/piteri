@@ -1,16 +1,20 @@
 // Waiters of the PDA (configurable list).
 //
 // ⚠️ This is ONLY A SCREEN LOCK / "who is using this phone" selector.
-// The PINs below are bundled in the public JS (/assets/pda.js): anyone can read them.
-// It is NOT security. The real protection of the data is the RLS policies in
-// supabase/policies.sql. Never gate anything sensitive behind these PINs.
+// Real PINs live in PUBLIC_WAITERS_JSON (.env.local / Vercel), never in git.
+// The build still injects that JSON into the public JS (/assets/pda.js): anyone
+// can read it. It is NOT security. The real protection of the data is the RLS
+// policies in supabase/policies.sql. Never gate anything sensitive behind these PINs.
 //
-// Fields:
+// Fields: { id, pin, name, zones, admin? }
 //   id     stable id, saved on every order (orders.waiter_id)
 //   pin    4 digits
 //   name   shown on the floor plan and on the kitchen tickets (orders.waiter_name)
 //   zones  zone keys the waiter looks after: 'sala' | 'giardino' | 'bancone'
 //   admin  (optional) receives every "pronto per ritiro" alert, whatever the table
+//
+// Production must set PUBLIC_WAITERS_JSON. If it is missing or invalid, the
+// demo list below is used (pins "XXXX" — they do not unlock the keypad).
 
 export const PIN_LENGTH = 4;
 
@@ -18,12 +22,38 @@ export const PIN_LENGTH = 4;
 // ('sala', 'barra', 'terraza') to these keys.
 export const ZONE_KEYS = ["sala", "giardino", "bancone"];
 
-export const WAITERS = [
-  { id: "marco", pin: "1111", name: "Marco", zones: ["sala"] },
-  { id: "sofia", pin: "2222", name: "Sofia", zones: ["giardino"] },
-  { id: "luca", pin: "3333", name: "Luca", zones: ["bancone"] },
-  { id: "admin", pin: "0000", name: "Admin / Caposala", zones: ["sala", "giardino", "bancone"], admin: true },
+// Demo fallback only. Real waiters: PUBLIC_WAITERS_JSON in .env.local / Vercel.
+const EXAMPLE_WAITERS = [
+  { id: "marco", pin: "XXXX", name: "Marco", zones: ["sala"] },
+  { id: "sofia", pin: "XXXX", name: "Sofia", zones: ["giardino"] },
+  { id: "luca", pin: "XXXX", name: "Luca", zones: ["bancone"] },
+  { id: "admin", pin: "XXXX", name: "Admin / Caposala", zones: ["sala", "giardino", "bancone"], admin: true },
 ];
+
+function isWaiter(value) {
+  return (
+    value &&
+    typeof value.id === "string" &&
+    typeof value.pin === "string" &&
+    typeof value.name === "string" &&
+    Array.isArray(value.zones) &&
+    value.zones.every((zone) => typeof zone === "string")
+  );
+}
+
+function parseWaitersFromEnv() {
+  const raw = process.env.PUBLIC_WAITERS_JSON;
+  if (!raw || typeof raw !== "string") return null;
+  try {
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed) || parsed.length === 0 || !parsed.every(isWaiter)) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+export const WAITERS = parseWaitersFromEnv() ?? EXAMPLE_WAITERS;
 
 export const findWaiterByPin = (pin) => WAITERS.find((waiter) => waiter.pin === pin) || null;
 
